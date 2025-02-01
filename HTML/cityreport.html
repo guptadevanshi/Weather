@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Forecast</title>
+    <style>
+      body {
+        background-image: url(https://images.pexels.com/photos/1905054/pexels-photo-1905054.jpeg?cs=srgb&dl=pexels-timegrocery-1905054.jpg&fm=jpg);
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+        text-align: center;
+        background-color: whitesmoke;
+        height: 175px;
+        padding: 15px;
+        width: 30%;
+        position: absolute;
+        top: 25%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form">
+      <form onsubmit="return false;">
+        <label for="city">Enter city:</label>
+        <input type="text" id="city" name="city" /><br /><br />
+        <input
+          type="button"
+          value="Weather Report"
+          onclick="getWeatherReport()"
+        />
+      </form>
+      <div id="weatherResult"></div>
+    </div>
+
+    <script>
+      async function getWeatherReport() {
+        const city = document.getElementById("city").value.trim();
+
+        if (!city) {
+          alert("Please enter a city name.");
+          return;
+        }
+
+        const apiKey = "a067ce48b3bab7477f72b51e248f5374";
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+        try {
+          const response = await fetch(apiUrl);
+          if (!response.ok) {
+            throw new Error("City not found.");
+          }
+          const data = await response.json();
+
+          displayWeatherData(data);
+        } catch (error) {
+          document.getElementById("weatherResult").innerText = error.message;
+        }
+      }
+
+      function displayWeatherData(data) {
+        const { name, main, weather, wind } = data;
+        const weatherReport = `
+                <h2>Weather in ${name}</h2>
+                <p>Temperature: ${main.temp} °C</p>
+                <p>Feels Like: ${main.feels_like} °C</p>
+                <p>Humidity: ${main.humidity}%</p>
+                <p>Weather: ${weather[0].description}</p>
+                <p>Wind Speed: ${wind.speed} m/s</p>
+            `;
+
+        document.getElementById("weatherResult").innerHTML = weatherReport;
+      }
+    </script>
+  </body>
+</html>
